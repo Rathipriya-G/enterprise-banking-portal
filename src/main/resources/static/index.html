@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Banking Portal</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f3f6fc; color: #18243b; }
+    header { background: #102447; color: white; padding: 22px 7%; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 22px; }
+    header span { color: #b8d4ff; font-size: 13px; }
+    main { max-width: 1050px; margin: 38px auto; padding: 0 20px; }
+    .welcome { margin-bottom: 24px; }
+    .welcome h2 { margin-bottom: 8px; }
+    .welcome p { color: #62708a; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+    .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 5px 20px #10244710; }
+    .label { color: #68758c; font-size: 14px; }
+    .amount { font-size: 29px; font-weight: bold; margin: 15px 0 8px; }
+    button { background: #1769e0; color: white; border: 0; border-radius: 8px; padding: 12px 17px; cursor: pointer; font-size: 14px; }
+    button:hover { background: #1052b6; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+    #result { white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 20px; }
+    footer { text-align: center; color: #758099; font-size: 12px; padding: 28px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Northstar Banking</h1>
+  <span>ENTERPRISE DEMO PORTAL</span>
+</header>
+<main>
+  <section class="welcome">
+    <h2>Welcome to your dashboard</h2>
+    <p>View sample account information and test the connected banking API.</p>
+  </section>
+  <section class="grid">
+    <div class="card">
+      <div class="label">Sample account balance</div>
+      <div class="amount">₹25,000.00</div>
+      <div class="label">Demo data · Not a real bank account</div>
+    </div>
+    <div class="card">
+      <div class="label">Account type</div>
+      <div class="amount">Savings</div>
+      <div class="label">Account: DEMO-10001</div>
+    </div>
+    <div class="card">
+      <div class="label">API status</div>
+      <div class="amount" id="status">Checking…</div>
+      <div class="label">Connected to Spring Boot</div>
+    </div>
+  </section>
+  <div class="actions">
+    <button onclick="loadAccount()">View Account API</button>
+    <button onclick="checkHealth()">Check API Health</button>
+    <button onclick="showError()">Test Error Handler</button>
+    <button onclick="location.href='/swagger-ui.html'">Open API Documentation</button>
+  </div>
+  <div class="card" id="result">Choose an action to test the backend.</div>
+</main>
+<footer>Educational demonstration only · No real financial transactions</footer>
+<script>
+async function requestApi(path) {
+  const result = document.getElementById('result');
+  result.textContent = 'Loading…';
+  try {
+    const response = await fetch(path);
+    const data = await response.json();
+    result.textContent = JSON.stringify(data, null, 2);
+    if (path === '/api/health') {
+      document.getElementById('status').textContent = response.ok ? 'Online' : 'Error';
+    }
+  } catch (error) {
+    result.textContent = 'Request failed: ' + error.message;
+  }
+}
+function loadAccount() { requestApi('/api/account'); }
+function checkHealth() { requestApi('/api/health'); }
+function showError() { requestApi('/api/demo-error'); }
+checkHealth();
+</script>
+</body>
+</html>
